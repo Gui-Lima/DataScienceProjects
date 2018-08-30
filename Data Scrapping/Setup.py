@@ -5,11 +5,15 @@ from bs4 import BeautifulSoup
 import requests as rq
 import re
 
-url = "/home/ggfl/Github/DataScienceProjects/Data Scrapping/DataSets/galaxyS8PageZoom"
-parsed_page = BeautifulSoup(open(url),"html.parser")
+
+urlS8Page = "/home/ggfl/Github/DataScienceProjects/Data Scrapping/DataSets/galaxyS8PageZoom"
+urlJ7Page = "/home/ggfl/Github/DataScienceProjects/Data Scrapping/DataSets/galaxyJ7PageZoom"
+urlS7Page = "/home/ggfl/Github/DataScienceProjects/Data Scrapping/DataSets/galaxyS7PageZoom"
+parsed_page = BeautifulSoup(open(urlS7Page),"html.parser")
 
 
-regexSamsung = "(Galaxy S\d(?:\sPlus)?)\s*SM-G(?:\d+[a-zA-Z]*)\s*(?:\dGB\s*RAM)*\s*(\d+)GB"
+regexSamsung = "(Galaxy (?:S|J|A)\d(?:\sPlus|\sPro|\sPrime\d*|\sNeo|\sMetal|\sDuo|\sEdge(?:\sBlack Piano)?)?)\s*(?:(?:SM-)?(?:G|J|A)?(?:\d*[A-Z]+)?)?\s*(?:\d+GB\s*RAM)?\s*(\d+)GB(?:\s\d+G)?"
+
 allProducts = parsed_page.findAll('a', {'class':"name-link"})
 allPrices = parsed_page.findAll('a', {'class':"price-label"})
 allStoresAvaliable = parsed_page.findAll('span', {'class' : "storeCount-txt"})
@@ -53,7 +57,10 @@ def getList():
     menorPrecos = getLowestPrice()
     disponibilidade = getAvailability()
     for i in range(numberOfFinds):
-        listCelulares.append(dict(zip(['modelo','capacidade','menor preco','disponibilidade'],[modelos[i],int(capacidades[i]),menorPrecos[i], int(disponibilidade[i])])))
+        listCelulares.append(dict(zip(['modelo','capacidade','menorPreco','disponibilidade'],[modelos[i],int(capacidades[i]),menorPrecos[i], int(disponibilidade[i])])))
     return listCelulares
 
-print(getList())
+def getDataFrame():
+    dataCelulares = pd.DataFrame(getList(), columns=['modelo','capacidade','menorPreco','disponibilidade'])
+    return dataCelulares
+
