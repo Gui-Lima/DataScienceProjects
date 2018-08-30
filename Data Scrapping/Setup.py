@@ -9,10 +9,10 @@ import re
 urlS8Page = "/home/ggfl/Github/DataScienceProjects/Data Scrapping/DataSets/galaxyS8PageZoom"
 urlJ7Page = "/home/ggfl/Github/DataScienceProjects/Data Scrapping/DataSets/galaxyJ7PageZoom"
 urlS7Page = "/home/ggfl/Github/DataScienceProjects/Data Scrapping/DataSets/galaxyS7PageZoom"
-parsed_page = BeautifulSoup(open(urlS7Page),"html.parser")
+parsed_page = BeautifulSoup(open(urlS8Page),"html.parser")
 
 
-regexSamsung = "(Galaxy (?:S|J|A)\d(?:\sPlus|\sPro|\sPrime\d*|\sNeo|\sMetal|\sDuo|\sEdge(?:\sBlack Piano)?)?)\s*(?:(?:SM-)?(?:G|J|A)?(?:\d*[A-Z]+)?)?\s*(?:\d+GB\s*RAM)?\s*(\d+)GB(?:\s\d+G)?"
+regexSamsung = "(Galaxy (?:S|J|A)\d(?:\s20\d\d)?(?:\sPlus|\sPro|\sPrime\d*|\sNeo|\sMetal|\sDuo|\sEdge(?:\sBlack Piano)?)?)\s*(?:(?:SM-)?(?:G|J|A)?(?:\d*[A-Z]*)?)?\s*(?:\dGB\s*RAM)?\s*(\d\d+)GB(?:\s\d+G)?"
 
 allProducts = parsed_page.findAll('a', {'class':"name-link"})
 allPrices = parsed_page.findAll('a', {'class':"price-label"})
@@ -74,4 +74,3 @@ def getDataFrame():
     dataCelulares = pd.DataFrame(getList(), columns=['modelo','capacidade','menorPreco','disponibilidade'])
     return dataCelulares
 
-print(getDataFrame())
