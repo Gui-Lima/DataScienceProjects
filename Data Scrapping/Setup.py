@@ -16,7 +16,7 @@ regexSamsung = "(Galaxy (?:S|J|A)\d(?:\sPlus|\sPro|\sPrime\d*|\sNeo|\sMetal|\sDu
 
 allProducts = parsed_page.findAll('a', {'class':"name-link"})
 allPrices = parsed_page.findAll('a', {'class':"price-label"})
-allStoresAvaliable = parsed_page.findAll('span', {'class' : "storeCount-txt"})
+allPriceContainers = parsed_page.findAll('div', {'class' : "price-container"})
 
 def precoToFloat(x):
     return float(re.sub(',','.',re.sub('[a-zA-Z\$\s\.]+','',x)))
@@ -35,19 +35,29 @@ def getCapacity():
         capacidade.append(re.match(regexSamsung, filteredName).group(2))
     return capacidade
 
-def getLowestPrice():
-    menorPreco = []
-    for a in allPrices:
-        filteredPrice = precoToFloat(a.text)
-        menorPreco.append(filteredPrice)
-    return menorPreco
-
 def getAvailability():
     disponibilidade = []
-    for a in allStoresAvaliable:
-        filteredAvailability = re.sub('[a-zA-Z\$\s\.]+','',a.text)
-        disponibilidade.append(filteredAvailability)
+    for a in allPriceContainers:
+        notAvailiable = a.find('span', {'class' : "sold-out"})
+        available = a.find('span', {'class' : "storeCount-txt"})
+        if available:
+            filteredAvailability = re.sub('[a-zA-Z\$\s\.]+','',available.text)
+            disponibilidade.append(filteredAvailability)
+        if notAvailiable:
+            disponibilidade.append(0)
     return disponibilidade
+
+def getLowestPrice():
+    menorPreco = []
+    for a in allPriceContainers:
+        notAvailiable = a.find('span', {'class' : "sold-out"})
+        availiable = a.find('a', {'class' : "price-label"})
+        if availiable:
+            filteredPrice = precoToFloat(availiable.text)
+            menorPreco.append(filteredPrice)
+        if notAvailiable:
+            menorPreco.append(0.0)
+    return menorPreco
 
 def getList():
     numberOfFinds = len(parsed_page.findAll('a', {'class':"name-link"}))
@@ -64,3 +74,4 @@ def getDataFrame():
     dataCelulares = pd.DataFrame(getList(), columns=['modelo','capacidade','menorPreco','disponibilidade'])
     return dataCelulares
 
+print(getDataFrame())
