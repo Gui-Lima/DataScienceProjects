@@ -16,4 +16,16 @@ auth.set_access_token(chaves['PW'][0], chaves['PW'][1])
 
 api = tweepy.API(auth, wait_on_rate_limit=False)
 
-print(api.trends_available())
+
+
+def gettingCurrentTTBrasil():
+    trendtopics = api.trends_place(23424768)
+    dfTrendTopics = pd.DataFrame(trendtopics[0]['trends'])
+    return dfTrendTopics
+
+def gettingUserTweets(UserName):
+    userTweets = api.user_timeline(screen_name=UserName)
+    return userTweets
+
+
+
